@@ -85,7 +85,6 @@ Supported ranges:
 - Average density: `k ≤ 4`, `w ≤ ~200`
 
 
-
 ## ILP Scripts
 
 To run the ILP formulation described in the paper, use the scripts provided in the `./ILP` folder. 
