@@ -12,6 +12,7 @@ Implementation of several algorithms from the paper *Generating minimum-density 
   - [Average Density Computation](#average-density-computation)
 - [Technical Notes](#technical-notes)
 - [Additional Scripts](#additional-scripts)
+- [Tables](#tables)
 - [Contact](#contact)
 
 ## Introduction
