@@ -8,7 +8,6 @@ Implementation of several algorithms from the paper *Generating minimum-density 
 - [Installation and Compilation](#installation-and-compilation)
 - [Usage](#usage)
   - [Generating binary minimizers with optimal density](#generating-binary-minimizers-with-optimal-density)
-  - [UHS Tests: Paper Experiments](#uhs-tests-paper-experiments)
   - [Average Density Computation](#average-density-computation)
 - [Technical Notes](#technical-notes)
 - [Additional Scripts](#additional-scripts)
