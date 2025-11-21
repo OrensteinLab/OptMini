@@ -133,7 +133,7 @@ Mainly, it contains:
 2. Script to measure the density of the orders (`calc_density.ipynb`)
 3. Script to encode a minimizer string into the [GreedyMini](https://github.com/OrensteinLab/GreedyMini) format (`encode_opt_order.ipynb`)
 4. DFS version of calculating the average density of binary minimizers (`average_density_dfs.ipynb`)
-6. The code used to generate the paper’s plots (`plots.ipynb`)
+6. The code used to generate the paper’s plots (`plots.ipynb`), alongside the files needed for plotting.
 
 ### Version Notes
 These scripts were tested using
