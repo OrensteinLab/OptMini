@@ -1,0 +1,84 @@
+name: Build and Release Project
+
+on:
+  push:
+    tags:
+      - 'v*'                 # Run when pushing version tags like v1.0
+  workflow_dispatch:          # Allow manual trigger from the GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    outputs:
+      tag_name: ${{ steps.set_tag.outputs.tag_name }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # --- Create date-based tag for manual runs ---
+      - name: Create date tag (manual trigger only)
+        id: set_tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="v$(date +%Y-%m-%d-%H%M)"
+            echo "Creating tag $TAG"
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+            git tag "$TAG"
+            git push origin "$TAG"
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+          echo "tag_name=$TAG" >> $GITHUB_ENV
+          echo "tag_name=$TAG" >> $GITHUB_OUTPUT
+
+      # --- Install build dependencies ---
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential libboost-all-dev ninja-build zip
+
+      # --- Build statically linked binary ---
+      - name: Build OptMini (static)
+        run: |
+          cmake -S code -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_EXE_LINKER_FLAGS="-static-libstdc++ -static-libgcc"
+          cmake --build build --parallel
+          chmod +x build/OptMini
+
+      # --- Package executable ---
+      - name: Package binary
+        run: |
+          mkdir -p package
+          zip -j package/OptMini-linux-static.zip build/OptMini
+
+      # --- Upload artifact for release job ---
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OptMini-linux-static
+          path: package/OptMini-linux-static.zip
+
+  release:
+    needs: build
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: OptMini-linux-static
+          path: artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.build.outputs.tag_name }}
+          name: Release ${{ needs.build.outputs.tag_name }}
+          files: artifacts/OptMini-linux-static.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
